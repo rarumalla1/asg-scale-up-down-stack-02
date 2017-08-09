@@ -1,0 +1,53 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Parameters": {
+		"KeyName": {
+			"Description": "The EC2 Key Pair to allow SSH access to the instances",
+			"Type": "String"
+		},
+    "InstanceType" : {
+      "Description" : "EC2 instance type",
+      "Type" : "String",
+      "Default" : "t2.micro"
+
+    },
+    "ImageIds": {
+      "Type" : "String",
+      "Default" : "ami-a4c7edb2"
+    },
+    "InstanceSecurityGroup" : {
+      "Type" : "AWS::EC2::SecurityGroup::Id",
+      "Default": "sg-0a072577"
+   }
+	},
+
+	"Resources": {
+		"LaunchConfiguration": {
+			"Type": "AWS::AutoScaling::LaunchConfiguration",
+			"Properties": {
+				"InstanceType": {
+					"Ref": "InstanceType"
+				},
+				"ImageId": {"Ref": "ImageIds"},
+				"KeyName": {
+					"Ref": "KeyName"
+				},
+          "SecurityGroups" :[{"Ref": "InstanceSecurityGroup"}]
+
+			}
+		},
+		"QuadASG": {
+			"Type": "AWS::AutoScaling::AutoScalingGroup",
+			"Properties": {
+				"AvailabilityZones": {"Fn::GetAZs" : ""},
+				"LaunchConfigurationName": {
+					"Ref": "LaunchConfiguration"
+				},
+				"MinSize": "1",
+				"DesiredCapacity": "3",
+				"MaxSize": "5"
+			}
+
+		}
+	}
+}
