@@ -9,7 +9,6 @@
       "Description" : "EC2 instance type",
       "Type" : "String",
       "Default" : "t2.micro"
-
     },
     "ImageIds": {
       "Type" : "String",
@@ -20,7 +19,6 @@
       "Default": "sg-0a072577"
    }
 	},
-
 	"Resources": {
 		"LaunchConfiguration": {
 			"Type": "AWS::AutoScaling::LaunchConfiguration",
@@ -33,7 +31,6 @@
 					"Ref": "KeyName"
 				},
           "SecurityGroups" :[{"Ref": "InstanceSecurityGroup"}]
-
 			}
 		},
 		"QuadASG": {
@@ -47,27 +44,52 @@
 				"DesiredCapacity": "3",
 				"MaxSize": "5"
 			}
-
 		},
     "ScaleUP" : {
-    "Type" : "AWS::AutoScaling::ScalingPolicy",
-    "Properties" : {
-    "AdjustmentType" : "ChangeInCapacity",
-    "PolicyType" : "SimpleScaling",
-    "Cooldown" : "60",
-    "AutoScalingGroupName" : { "Ref" : "QuadASG" },
-    "ScalingAdjustment" : 1
-    }
+    	"Type" : "AWS::AutoScaling::ScalingPolicy",
+    	"Properties" : {
+    		"AdjustmentType" : "ChangeInCapacity",
+    		"PolicyType" : "SimpleScaling",
+    		"Cooldown" : "60",
+    		"AutoScalingGroupName" : { "Ref" : "QuadASG" },
+    		"ScalingAdjustment" : 1
+    	}
     },
     "ScaleDown" : {
-    "Type" : "AWS::AutoScaling::ScalingPolicy",
-    "Properties" : {
-    "AdjustmentType" : "ChangeInCapacity",
-    "PolicyType" : "SimpleScaling",
-    "Cooldown" : "60",
-    "AutoScalingGroupName" : { "Ref" : "QuadASG" },
-    "ScalingAdjustment" : -1
-    }
+    	"Type" : "AWS::AutoScaling::ScalingPolicy",
+    		"Properties" : {
+    		"AdjustmentType" : "ChangeInCapacity",
+    		"PolicyType" : "SimpleScaling",
+    		"Cooldown" : "60",
+    		"AutoScalingGroupName" : { "Ref" : "QuadASG" },
+    		"ScalingAdjustment" : -1
+    	}
     },
+		"CPUAlarmUP" : {
+  		"Type" : "AWS::CloudWatch::Alarm",
+  		"Properties" : {
+    			"AlarmDescription" : "CPU alarm for my instance",
+    			"MetricName" : "CPUUtilization",
+    			"Namespace" : "AWS/EC2",
+    			"Statistic" : "Average",
+    			"Period" : "120",
+    			"EvaluationPeriods" : "1",
+    			"Threshold" : "80",
+    			"ComparisonOperator" : "GreaterThanThreshold"
+  				}
+				},
+				"CPUAlarmDown" : {
+		  		"Type" : "AWS::CloudWatch::Alarm",
+		  		"Properties" : {
+		    			"AlarmDescription" : "CPU alarm for my instance",
+		    			"MetricName" : "CPUUtilization",
+		    			"Namespace" : "AWS/EC2",
+		    			"Statistic" : "Average",
+		    			"Period" : "300",
+		    			"EvaluationPeriods" : "1",
+		    			"Threshold" : "40",
+		    			"ComparisonOperator" : "LessThanThreshold"
+		  				}
+			}
 	}
 }
