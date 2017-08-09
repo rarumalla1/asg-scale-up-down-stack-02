@@ -48,6 +48,26 @@
 				"MaxSize": "5"
 			}
 
-		}
+		},
+    "ScaleUP" : {
+    "Type" : "AWS::AutoScaling::ScalingPolicy",
+    "Properties" : {
+    "AdjustmentType" : "ChangeInCapacity",
+    "PolicyType" : "SimpleScaling",
+    "Cooldown" : "60",
+    "AutoScalingGroupName" : { "Ref" : "QuadASG" },
+    "ScalingAdjustment" : 1
+    }
+    },
+    "ScaleDown" : {
+    "Type" : "AWS::AutoScaling::ScalingPolicy",
+    "Properties" : {
+    "AdjustmentType" : "ChangeInCapacity",
+    "PolicyType" : "SimpleScaling",
+    "Cooldown" : "60",
+    "AutoScalingGroupName" : { "Ref" : "QuadASG" },
+    "ScalingAdjustment" : -1
+    }
+    },
 	}
 }
